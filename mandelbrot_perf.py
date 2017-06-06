@@ -108,6 +108,43 @@ def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
 get_ipython().magic('timeit mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
+# In[21]:
+
+from numba import jit
+
+@jit
+def mset_iteration_numba(c, maxiter=256):
+    z = c
+    for n in range(maxiter):
+        if abs(z) > 2:
+            return n
+        z = z**2 + c
+    return n
+
+@jit
+def mandelbrot_set_numba(xmin, xmax, ymin, ymax, width, height, maxiter=256):
+    m = np.empty((height, width), dtype=np.uint8)
+    real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
+
+    for j, i in product(range(height), range(width)):
+        x = real_range[i]
+        y = imaginary_range[j]
+        c = x + y*1j
+        m[j,i] = mset_iteration_numba(c, maxiter)
+
+    return m, real_range, imaginary_range
+
+
+# In[23]:
+
+#mset_draw(mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)[0])
+
+
+# In[24]:
+
+get_ipython().magic('timeit mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)')
+
+
 # In[ ]:
 
 
