@@ -54,6 +54,31 @@ mset_draw(np.array(mset).reshape(600, 600).T);
 get_ipython().magic('timeit mandelbrot_set_list_comp(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
+# In[9]:
+
+def mandelbrot_set_numpy(xmin, xmax, ymin, ymax, width, height, maxiter=256):
+    m = np.empty((height, width), dtype=np.uint8)
+    real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
+    
+    for j, i in product(range(height), range(width)):
+        x = real_range[i]
+        y = imaginary_range[j]
+        c = x + y*1j
+        m[j,i] = mset_iteration(c, maxiter)
+
+    return m, real_range, imaginary_range
+
+
+# In[12]:
+
+#mset_draw(mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)[0])
+
+
+# In[13]:
+
+get_ipython().magic('timeit mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)')
+
+
 # In[ ]:
 
 
