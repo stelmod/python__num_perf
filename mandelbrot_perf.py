@@ -79,6 +79,35 @@ def mandelbrot_set_numpy(xmin, xmax, ymin, ymax, width, height, maxiter=256):
 get_ipython().magic('timeit mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
+# In[16]:
+
+def mandelbrot_vectors(c, maxiter):
+    output = np.zeros(c.shape)
+    z = np.zeros(c.shape, np.complex64)
+    for it in range(maxiter):
+        notdone = np.less(z.real*z.real + z.imag*z.imag, 4.0)
+        output[notdone] = it
+        z[notdone] = z[notdone]**2 + c[notdone]
+    output[output == maxiter-1] = maxiter-1
+    return output
+
+def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
+    real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
+
+    c = real_range + imaginary_range[:,None]*1j
+    return mandelbrot_vectors(c, maxiter)
+
+
+# In[18]:
+
+#mset_draw(mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600))
+
+
+# In[20]:
+
+get_ipython().magic('timeit mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600)')
+
+
 # In[ ]:
 
 
