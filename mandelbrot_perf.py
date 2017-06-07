@@ -54,7 +54,7 @@ mset_draw(np.array(mset).reshape(600, 600).T);
 get_ipython().magic('timeit mandelbrot_set_list_comp(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
-# In[9]:
+# In[8]:
 
 def mandelbrot_set_numpy(xmin, xmax, ymin, ymax, width, height, maxiter=256):
     m = np.empty((height, width), dtype=np.uint8)
@@ -69,17 +69,17 @@ def mandelbrot_set_numpy(xmin, xmax, ymin, ymax, width, height, maxiter=256):
     return m, real_range, imaginary_range
 
 
-# In[12]:
+# In[9]:
 
 #mset_draw(mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)[0])
 
 
-# In[13]:
+# In[10]:
 
 get_ipython().magic('timeit mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
-# In[16]:
+# In[11]:
 
 def mandelbrot_vectors(c, maxiter):
     output = np.zeros(c.shape)
@@ -98,17 +98,17 @@ def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
     return mandelbrot_vectors(c, maxiter)
 
 
-# In[18]:
+# In[12]:
 
 #mset_draw(mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600))
 
 
-# In[20]:
+# In[13]:
 
 get_ipython().magic('timeit mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
-# In[21]:
+# In[14]:
 
 from numba import jit
 
@@ -135,34 +135,43 @@ def mandelbrot_set_numba(xmin, xmax, ymin, ymax, width, height, maxiter=256):
     return m, real_range, imaginary_range
 
 
-# In[23]:
+# In[15]:
 
 #mset_draw(mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)[0])
 
 
-# In[24]:
+# In[16]:
 
 get_ipython().magic('timeit mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
-# In[25]:
+# In[17]:
 
 get_ipython().magic('load_ext Cython')
 
 
-# In[26]:
+# In[18]:
 
 get_ipython().run_cell_magic('cython', '', '\nimport cython\nimport numpy as np\ncimport numpy as np\n\ncdef np.uint8_t cp_mset_iteration(double complex c, int maxiter=256):\n    cdef:\n        double complex z\n        int n\n        \n    z = c\n    for n in range(maxiter):\n        if z.real**2 + z.imag**2 > 4.0:\n            return n\n        z = z**2 + c\n    return n\n\n@cython.boundscheck(False)\ndef cp_mandelbrot_set_loop(double xmin, double xmax, double ymin, double ymax, int width, int height, int maxiter=256):\n    cdef:\n        int j, i\n        double x, y\n        double[:] real_range = np.linspace(xmin, xmax, width)\n        double[:] imaginary_range = np.linspace(ymin, ymax, height)\n        double complex c\n        np.uint8_t[:,:] m = np.empty((height, width), dtype=np.uint8)\n        \n    for j in range(height):\n        for i in range(width):\n            x = real_range[i]\n            y = imaginary_range[j]\n            c = x + y*1j\n            m[j,i] = cp_mset_iteration(c, maxiter)\n\n    return m')
 
 
-# In[27]:
+# In[19]:
 
-#mset_draw(cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600))
+mset_draw(cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600))
 
 
-# In[28]:
+# In[20]:
 
 get_ipython().magic('timeit cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600)')
+
+
+# In[ ]:
+
+# seahorses?
+mset = cp_mandelbrot_set_loop(-0.745625,-0.7449749,0.1121549, 0.112805, 15000, 15000)
+plt.figimage(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix', resize=True);
+#plt.imshow(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix');
+plt.savefig('mandelbrot.png', format='png');
 
 
 # In[ ]:
