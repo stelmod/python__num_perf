@@ -11,10 +11,14 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 
 
-# In[2]:
+# In[40]:
 
-def mset_draw(mset):
-    plt.imshow(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix');
+def mset_draw(mset, x=None, y=None):
+    if x is not None and y is not None:
+        plt.imshow(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix', extent=[x[0], x[-1], y[0], y[-1]]);
+    else:
+        plt.imshow(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix');
+        plt.axis('off');
 
 
 # In[3]:
@@ -43,10 +47,10 @@ def mandelbrot_set_list_comp(xmin, xmax, ymin, ymax, width, height, maxiter=256)
     return m, real_range, imaginary_range
 
 
-# In[6]:
+# In[43]:
 
 mset, r, i = mandelbrot_set_list_comp(-2.0,0.5,-1.25,1.25, 600, 600)
-mset_draw(np.array(mset).reshape(600, 600).T);
+mset_draw(np.array(mset).reshape(600, 600).T, r, i);
 
 
 # In[7]:
