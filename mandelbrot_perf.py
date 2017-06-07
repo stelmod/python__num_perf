@@ -1,6 +1,17 @@
 
 # coding: utf-8
 
+# A [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set) is the set of complex numbers c where:
+# $$
+# \begin{array}{c}
+# c \in \mathbb{C} \\\
+# z_0 = 0 \\\
+# z_{n+1} = z_n^2 + c \\\
+# \lim_{n\to \infty} \lvert z_{n+1}\rvert \le 2
+# \end{array}
+# $$
+# 
+
 # In[1]:
 
 get_ipython().magic('matplotlib inline')
@@ -29,6 +40,7 @@ def create_intervals(xmin, xmax, ymin, ymax, width, height):
 
 # In[4]:
 
+# Mandelbrot set iteration
 def mset_iteration(c, maxiter=256):
     z = c
     for n in range(maxiter):
@@ -132,7 +144,7 @@ def mandelbrot_vectors(c, maxiter):
     output[output == maxiter-1] = maxiter-1
     return output
 
-def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
+def mandelbrot_set_vectors(xmin, xmax, ymin, ymax, width, height, maxiter=256):
     real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
 
     c = real_range + imaginary_range[:,None]*1j
@@ -171,7 +183,7 @@ get_ipython().magic('timeit cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600
 
 # In[ ]:
 
-# seahorses?
+# seahorses?!
 mset = cp_mandelbrot_set_loop(-0.745625,-0.7449749,0.1121549, 0.112805, 15000, 15000)
 plt.figimage(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix', resize=True);
 #plt.imshow(mset, norm=colors.PowerNorm(0.3), cmap='cubehelix');
