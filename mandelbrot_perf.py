@@ -81,35 +81,6 @@ get_ipython().magic('timeit mandelbrot_set_numpy(-2.0,0.5,-1.25,1.25, 600, 600)'
 
 # In[11]:
 
-def mandelbrot_vectors(c, maxiter):
-    output = np.zeros(c.shape)
-    z = np.zeros(c.shape, np.complex64)
-    for it in range(maxiter):
-        notdone = np.less(z.real*z.real + z.imag*z.imag, 4.0)
-        output[notdone] = it
-        z[notdone] = z[notdone]**2 + c[notdone]
-    output[output == maxiter-1] = maxiter-1
-    return output
-
-def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
-    real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
-
-    c = real_range + imaginary_range[:,None]*1j
-    return mandelbrot_vectors(c, maxiter)
-
-
-# In[12]:
-
-#mset_draw(mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600))
-
-
-# In[13]:
-
-get_ipython().magic('timeit mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600)')
-
-
-# In[14]:
-
 from numba import jit
 
 @jit
@@ -135,14 +106,43 @@ def mandelbrot_set_numba(xmin, xmax, ymin, ymax, width, height, maxiter=256):
     return m, real_range, imaginary_range
 
 
-# In[15]:
+# In[12]:
 
 #mset_draw(mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)[0])
 
 
-# In[16]:
+# In[13]:
 
 get_ipython().magic('timeit mandelbrot_set_numba(-2.0,0.5,-1.25,1.25, 600, 600)')
+
+
+# In[14]:
+
+def mandelbrot_vectors(c, maxiter):
+    output = np.zeros(c.shape)
+    z = np.zeros(c.shape, np.complex64)
+    for it in range(maxiter):
+        notdone = np.less(z.real*z.real + z.imag*z.imag, 4.0)
+        output[notdone] = it
+        z[notdone] = z[notdone]**2 + c[notdone]
+    output[output == maxiter-1] = maxiter-1
+    return output
+
+def mandelbrot_set_vectors(xmin,xmax,ymin,ymax,width,height,maxiter=256):
+    real_range, imaginary_range = create_intervals(xmin, xmax, ymin, ymax, width, height)
+
+    c = real_range + imaginary_range[:,None]*1j
+    return mandelbrot_vectors(c, maxiter)
+
+
+# In[15]:
+
+#mset_draw(mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600))
+
+
+# In[16]:
+
+get_ipython().magic('timeit mandelbrot_set_vectors(-2.0,0.5,-1.25,1.25, 600, 600)')
 
 
 # In[17]:
@@ -157,7 +157,7 @@ get_ipython().run_cell_magic('cython', '', '\nimport cython\nimport numpy as np\
 
 # In[19]:
 
-mset_draw(cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600))
+#mset_draw(cp_mandelbrot_set_loop(-2.0,0.5,-1.25,1.25, 600, 600))
 
 
 # In[20]:
