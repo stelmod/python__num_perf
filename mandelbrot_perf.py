@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 
 
-# In[40]:
+# In[2]:
 
 def mset_draw(mset, x=None, y=None):
     if x is not None and y is not None:
@@ -59,7 +59,7 @@ def mandelbrot_set_list_comp(xmin, xmax, ymin, ymax, width, height, maxiter=256)
     return m, real_range, imaginary_range
 
 
-# In[43]:
+# In[6]:
 
 mset, r, i = mandelbrot_set_list_comp(-2.0,0.5,-1.25,1.25, 600, 600)
 mset_draw(np.array(mset).reshape(600, 600).T, r, i);
@@ -168,7 +168,7 @@ get_ipython().magic('load_ext Cython')
 
 # In[18]:
 
-get_ipython().run_cell_magic('cython', '', '\nimport cython\nimport numpy as np\ncimport numpy as np\n\ncdef np.uint8_t cp_mset_iteration(double complex c, int maxiter=256):\n    cdef:\n        double complex z\n        int n\n        \n    z = c\n    for n in range(maxiter):\n        if z.real**2 + z.imag**2 > 4.0:\n            return n\n        z = z**2 + c\n    return n\n\n@cython.boundscheck(False)\ndef cp_mandelbrot_set_loop(double xmin, double xmax, double ymin, double ymax, int width, int height, int maxiter=256):\n    cdef:\n        int j, i\n        double x, y\n        double[:] real_range = np.linspace(xmin, xmax, width)\n        double[:] imaginary_range = np.linspace(ymin, ymax, height)\n        double complex c\n        np.uint8_t[:,:] m = np.empty((height, width), dtype=np.uint8)\n        \n    for j in range(height):\n        for i in range(width):\n            x = real_range[i]\n            y = imaginary_range[j]\n            c = x + y*1j\n            m[j,i] = cp_mset_iteration(c, maxiter)\n\n    return m')
+get_ipython().run_cell_magic('cython', '', '\nimport cython\nimport numpy as np\ncimport numpy as np\n\ncdef np.uint8_t cp_mset_iteration(double complex c, int maxiter=256):\n    cdef:\n        double complex z\n        int n\n        \n    z = c\n    for n in range(maxiter):\n        if z.real**2 + z.imag**2 > 4.0:\n            return n\n        z = z**2 + c\n    return n\n\n@cython.boundscheck(False)\ncpdef cp_mandelbrot_set_loop(double xmin, double xmax, double ymin, double ymax, int width, int height, int maxiter=256):\n    cdef:\n        int j, i\n        double x, y\n        double[:] real_range = np.linspace(xmin, xmax, width)\n        double[:] imaginary_range = np.linspace(ymin, ymax, height)\n        double complex c\n        np.uint8_t[:,:] m = np.empty((height, width), dtype=np.uint8)\n        \n    for j in range(height):\n        for i in range(width):\n            x = real_range[i]\n            y = imaginary_range[j]\n            c = x + y*1j\n            m[j,i] = cp_mset_iteration(c, maxiter)\n\n    return m')
 
 
 # In[19]:
